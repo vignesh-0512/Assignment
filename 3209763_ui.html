@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fafafa;
+  --surface:#ffffff;
+  --border:#e2e2e2;
+  --text:#1a1a1a;
+  --text-muted:#6b6b6b;
+  --accent:#2563eb;
+  --accent-hover:#1d4ed8;
+  --success:#15803d;
+  --error:#c0362c;
+  --radius:6px;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  font-size:15px;
+  line-height:1.5;
+}
+.app{max-width:680px;margin:0 auto;padding:32px 20px 80px;}
+h1,h2{margin:0 0 4px;font-weight:600;}
+h2{font-size:19px;}
+a{color:inherit;}
+
+header.brand{padding:4px 0 28px;font-weight:700;font-size:16px;}
+
+nav.topnav{
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  padding-bottom:14px;margin-bottom:28px;
+  flex-wrap:wrap;gap:10px;
+}
+nav.topnav .links{display:flex;gap:2px;flex-wrap:wrap;}
+nav.topnav button.navlink{
+  background:none;border:none;color:var(--text-muted);
+  font-family:inherit;font-weight:500;font-size:14px;
+  padding:6px 10px;border-radius:var(--radius);cursor:pointer;
+}
+nav.topnav button.navlink:hover{color:var(--text);}
+nav.topnav button.navlink.active{color:var(--text);background:#f0f0f0;}
+.user-box{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text-muted);}
+.btn-logout{
+  background:none;border:1px solid var(--border);color:var(--text);
+  padding:5px 10px;border-radius:var(--radius);font-size:13px;cursor:pointer;font-family:inherit;
+}
+.btn-logout:hover{background:#f0f0f0;}
+
+.panel{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  margin-bottom:16px;
+}
+p.lead{color:var(--text-muted);margin:0 0 20px;font-size:14px;}
+
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:13px;font-weight:500;margin-bottom:5px;}
+.field input, .field select, .field textarea{
+  width:100%;padding:8px 10px;border:1px solid var(--border);
+  border-radius:var(--radius);font-size:14px;font-family:inherit;
+  background:#fff;color:var(--text);
+}
+.field input:focus, .field select:focus, .field textarea:focus{
+  outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent);
+}
+.field textarea{resize:vertical;min-height:64px;}
+.field.error input, .field.error select, .field.error textarea{border-color:var(--error);}
+.field .err-msg{display:none;color:var(--error);font-size:12px;margin-top:4px;}
+.field.error .err-msg{display:block;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.row-mobile{display:grid;grid-template-columns:100px 1fr;gap:8px;}
+@media (max-width:560px){ .row2{grid-template-columns:1fr;} }
+
+.btn{
+  font-family:inherit;font-weight:600;font-size:14px;
+  padding:9px 18px;border-radius:var(--radius);border:1px solid transparent;cursor:pointer;
+}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent-hover);}
+.btn-primary:disabled{background:#b9c8f2;cursor:not-allowed;}
+.btn-secondary{background:#fff;color:var(--text);border-color:var(--border);}
+.btn-secondary:hover{background:#f5f5f5;}
+.btn-ghost{background:none;border:none;color:var(--accent);cursor:pointer;font-family:inherit;font-size:13px;padding:0;}
+.actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
+
+.success-badge{color:var(--success);font-weight:600;font-size:15px;margin-bottom:16px;}
+.id-display{
+  background:#f0f0f0;color:var(--text);
+  font-family:'Inter',monospace;font-size:18px;letter-spacing:1px;
+  padding:10px 14px;border-radius:var(--radius);display:inline-block;margin:6px 0 16px;
+  border:1px solid var(--border);
+}
+.detail-grid{display:grid;grid-template-columns:150px 1fr;gap:8px 12px;font-size:14px;margin-bottom:4px;}
+.detail-grid dt{color:var(--text-muted);}
+.detail-grid dd{margin:0;}
+
+table.bills{width:100%;border-collapse:collapse;margin-bottom:4px;}
+table.bills th{
+  text-align:left;font-size:12px;color:var(--text-muted);font-weight:500;
+  padding:8px;border-bottom:1px solid var(--border);
+}
+table.bills td{padding:10px 8px;border-bottom:1px solid var(--border);font-size:14px;}
+.total-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  background:#f5f5f5;border-radius:var(--radius);padding:14px 16px;margin-top:12px;
+}
+.total-bar .label{font-size:13px;color:var(--text-muted);}
+.total-bar .value{font-size:18px;font-weight:600;}
+
+.mode-toggle{display:flex;gap:8px;margin-top:4px;}
+.mode-toggle label{
+  flex:1;border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;
+  display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;
+}
+.mode-toggle input{width:auto;}
+.mode-toggle label:has(input:checked){border-color:var(--accent);background:#eef2ff;}
+
+.hidden{display:none !important;}
+.status-pill{
+  display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;
+}
+.status-open{background:#fdead0;color:#8a4a00;}
+.status-progress{background:#dbeafe;color:#1d4ed8;}
+.status-resolved{background:#dcfce7;color:var(--success);}
+
+.field-note{font-size:12px;color:var(--text-muted);margin-top:-6px;margin-bottom:14px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="brand">Vidyut Connect</header>
+
+  <nav class="topnav hidden" id="topnav">
+    <div class="links">
+      <button class="navlink" data-target="home">Home</button>
+      <button class="navlink" data-target="paybill">Pay Bill</button>
+      <button class="navlink" data-target="complaint">Register Complaint</button>
+      <button class="navlink" data-target="complaintstatus">Complaint Status</button>
+    </div>
+    <div class="user-box">
+      <span id="welcomeText">Welcome, guest</span>
+      <button class="btn-logout" id="logoutBtn">Logout</button>
+    </div>
+  </nav>
+
+  <section id="screen-login">
+    <div class="panel">
+      <h2>Log in</h2>
+      <p class="lead">Enter your User ID and password to view and pay your electricity bill.</p>
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="loginUserId">User ID</label>
+          <input type="text" id="loginUserId" required minlength="5" maxlength="20">
+        </div>
+        <div class="field">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" required>
+          <div class="err-msg">Enter your User ID and password to continue.</div>
+        </div>
+        <div class="actions">
+          <button type="submit" class="btn btn-primary">Log in</button>
+          <button type="button" class="btn-ghost" id="goRegister">New here? Register as a customer</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section id="screen-register" class="hidden">
+    <div class="panel">
+      <h2>Register as a new customer</h2>
+      <p class="lead">Fill in your details below to create your account.</p>
+      <form id="registerForm" novalidate>
+        <div class="row2">
+          <div class="field">
+            <label for="regConsumerId">Consumer ID</label>
+            <input type="text" inputmode="numeric" id="regConsumerId" maxlength="13" placeholder="13-digit number" required pattern="\d{13}">
+            <div class="err-msg">Enter exactly 13 digits.</div>
+          </div>
+          <div class="field">
+            <label for="regBillNumber">Bill Number</label>
+            <input type="text" inputmode="numeric" id="regBillNumber" maxlength="5" placeholder="Last 5 digits of your bill" required pattern="\d{5}">
+            <div class="err-msg">Enter exactly 5 digits.</div>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="regTitle">Title</label>
+            <select id="regTitle" required>
+              <option value="">Select</option>
+              <option>Mr.</option><option>Mrs.</option><option>Ms.</option><option>Dr.</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="regName">Customer Name</label>
+            <input type="text" id="regName" maxlength="50" required placeholder="Full name">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="regEmail">Email</label>
+          <input type="email" id="regEmail" required placeholder="you@example.com">
+        </div>
+
+        <div class="field">
+          <label>Mobile number</label>
+          <div class="row-mobile">
+            <select id="regCountryCode" required>
+              <option value="">Code</option>
+              <option value="+91">+91</option>
+              <option value="+1">+1</option>
+              <option value="+44">+44</option>
+              <option value="+971">+971</option>
+            </select>
+            <input type="text" inputmode="numeric" id="regMobile" maxlength="10" placeholder="10-digit mobile number" required pattern="\d{10}">
+          </div>
+          <div class="err-msg" id="mobileErr">Select a country code and enter a 10-digit number.</div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="regUserId">User ID</label>
+            <input type="text" id="regUserId" minlength="5" maxlength="20" required placeholder="5–20 characters">
+            <div class="err-msg">Must be 5–20 characters.</div>
+          </div>
+          <div></div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="regPassword">Password</label>
+            <input type="password" id="regPassword" maxlength="30" required placeholder="Up to 30 characters">
+          </div>
+          <div class="field">
+            <label for="regConfirmPassword">Confirm Password</label>
+            <input type="password" id="regConfirmPassword" maxlength="30" required placeholder="Re-enter password">
+            <div class="err-msg">Passwords do not match.</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn btn-primary">Register</button>
+          <button type="reset" class="btn btn-secondary" id="regResetBtn">Reset</button>
+          <button type="button" class="btn-ghost" id="backToLoginFromReg">Back to login</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section id="screen-register-ack" class="hidden">
+    <div class="panel">
+      <div class="success-badge">Consumer Registration successful.</div>
+      <div class="field-note">Customer ID</div>
+      <div class="id-display" id="ackCustomerId">0000000000000</div>
+      <dl class="detail-grid">
+        <dt>Customer Name</dt><dd id="ackName">—</dd>
+        <dt>Email</dt><dd id="ackEmail">—</dd>
+      </dl>
+      <p class="field-note">This is a static registration flow — no data is sent to a live database.</p>
+      <div class="actions">
+        <button class="btn btn-primary" id="ackToLogin">Continue to login</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-home" class="hidden">
+    <div class="panel">
+      <h2 id="homeGreeting">Welcome back</h2>
+      <p class="lead">You have <strong id="homeUnpaidCount">2</strong> unpaid bill(s) on your account. Go to Pay Bill to review and settle them, or Register Complaint if something needs attention.</p>
+    </div>
+  </section>
+
+  <section id="screen-paybill" class="hidden">
+    <div class="panel">
+      <h2>Your electricity bills</h2>
+      <p class="lead">Select the bills you'd like to pay. The total updates automatically.</p>
+      <table class="bills">
+        <thead>
+          <tr><th></th><th>Bill period</th><th>Consumer ID</th><th>Due date</th><th>Amount</th></tr>
+        </thead>
+        <tbody id="billsTbody"></tbody>
+      </table>
+      <div class="total-bar">
+        <span class="label">Total bill amount</span>
+        <span class="value" id="billTotal">₹0.00</span>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" id="proceedToPay" disabled>Proceed to Pay</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-payment" class="hidden">
+    <div class="panel">
+      <h2>Confirm payment</h2>
+      <dl class="detail-grid">
+        <dt>Bill Amount</dt><dd id="payBillAmount">₹0.00</dd>
+        <dt>PG Charge</dt><dd id="payPgCharge">₹0.00</dd>
+        <dt>Total Payable Amount</dt><dd id="payTotalAmount">₹0.00</dd>
+      </dl>
+      <div class="field" style="margin-top:12px;">
+        <label>Mode of Payment</label>
+        <div class="mode-toggle">
+          <label><input type="radio" name="payMode" value="Debit" checked> Debit Card</label>
+          <label><input type="radio" name="payMode" value="Credit"> Credit Card</label>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" id="payNowBtn">Pay Now</button>
+        <button class="btn btn-secondary" id="backToHomeFromPay">Back to Home</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-card" class="hidden">
+    <div class="panel">
+      <h2 id="cardHeading">Credit Card</h2>
+      <form id="cardForm" novalidate>
+        <div class="field">
+          <label for="cardNumber">Card No</label>
+          <input type="text" inputmode="numeric" id="cardNumber" placeholder="16-digit card number" required pattern="\d{16,19}" maxlength="19">
+          <div class="err-msg">Enter at least 16 digits.</div>
+        </div>
+        <div class="field">
+          <label for="cardHolder">Card Holder Name</label>
+          <input type="text" id="cardHolder" minlength="10" required placeholder="Name as on card">
+          <div class="err-msg">Must be at least 10 characters.</div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="cardExpiry">Expiry Date</label>
+            <input type="text" id="cardExpiry" placeholder="MM/YY" required pattern="(0[1-9]|1[0-2])\/\d{2}" maxlength="5">
+            <div class="err-msg">Use MM/YY format.</div>
+          </div>
+          <div class="field">
+            <label for="cardCvv">CVV</label>
+            <input type="password" inputmode="numeric" id="cardCvv" required pattern="\d{3,4}" maxlength="4">
+            <div class="err-msg">Enter at least 3 digits.</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit" class="btn btn-primary">Make Payment</button>
+          <button type="button" class="btn-secondary btn" id="backToHomeFromCard">Back to Home</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section id="screen-payment-success" class="hidden">
+    <div class="panel">
+      <div class="success-badge">Payment successful.</div>
+      <dl class="detail-grid">
+        <dt>Transaction ID</dt><dd id="txnId">—</dd>
+        <dt>Amount Paid</dt><dd id="txnAmount">—</dd>
+        <dt>Mode of Payment</dt><dd id="txnMode">—</dd>
+        <dt>Date &amp; Time</dt><dd id="txnDate">—</dd>
+      </dl>
+      <div class="actions">
+        <a class="btn btn-primary" id="downloadReceipt" href="#" download="receipt.txt" style="text-decoration:none;display:inline-block;">Download receipt</a>
+        <button class="btn btn-secondary" id="backToHomeFromSuccess">Back to Home</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-complaint" class="hidden">
+    <div class="panel">
+      <h2>Register a complaint</h2>
+      <form id="complaintForm" novalidate>
+        <div class="row2">
+          <div class="field">
+            <label for="cType">Complaint / Service type</label>
+            <select id="cType" required>
+              <option value="">Select type</option>
+              <option value="Billing related">Billing related</option>
+              <option value="Voltage related">Voltage related</option>
+              <option value="Frequent disruption">Frequent disruption</option>
+              <option value="Street light related">Street light related</option>
+              <option value="Pole related">Pole related</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="cCategory">Category</label>
+            <select id="cCategory" required disabled>
+              <option value="">Select type first</option>
+            </select>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="cContact">Contact Person</label>
+            <input type="text" id="cContact" required>
+          </div>
+          <div class="field">
+            <label for="cLandmark">Landmark</label>
+            <input type="text" id="cLandmark" required>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="cConsumerNo">Consumer No</label>
+            <input type="text" inputmode="numeric" id="cConsumerNo" maxlength="13" pattern="\d{13}" required placeholder="13-digit number">
+          </div>
+          <div class="field">
+            <label for="cMobile">Mobile Number</label>
+            <input type="text" inputmode="numeric" id="cMobile" maxlength="10" pattern="\d{10}" required placeholder="10-digit number">
+          </div>
+        </div>
+        <div class="field">
+          <label for="cProblem">Problem description</label>
+          <textarea id="cProblem" required></textarea>
+        </div>
+        <div class="field">
+          <label for="cAddress">Address</label>
+          <textarea id="cAddress" required></textarea>
+        </div>
+        <div class="actions">
+          <button type="submit" class="btn btn-primary">Submit Complaint</button>
+          <button type="button" class="btn btn-secondary" id="complaintCancel">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section id="screen-complaint-ack" class="hidden">
+    <div class="panel">
+      <div class="success-badge">Complaint registered successfully.</div>
+      <div class="field-note">Complaint ID</div>
+      <div class="id-display" id="complaintAckId">CMP-000000</div>
+      <div class="actions">
+        <button class="btn btn-primary" id="ackToComplaintStatus">View Complaint Status</button>
+        <button class="btn btn-secondary" id="ackToHomeFromComplaint">Back to Home</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-complaintstatus" class="hidden">
+    <div class="panel">
+      <h2>Your complaints</h2>
+      <table class="bills" id="complaintTable">
+        <thead>
+          <tr><th>Complaint ID</th><th>Type</th><th>Category</th><th>Logged on</th><th>Status</th></tr>
+        </thead>
+        <tbody id="complaintTbody"></tbody>
+      </table>
+      <p class="field-note" id="noComplaintsNote">No complaints registered yet.</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const state = {
+    userId: "",
+    bills: [
+      {id:"b1", period:"May 2026",  consumer:"1234567890123", due:"2026-06-10", amount:1420.50},
+      {id:"b2", period:"June 2026", consumer:"1234567890123", due:"2026-07-10", amount:980.00},
+      {id:"b3", period:"July 2026", consumer:"1234567890123", due:"2026-08-10", amount:1105.75}
+    ],
+    complaints: [],
+    selectedBillTotal: 0,
+    complaintTypeCategories: {
+      "Billing related": ["Wrong Bill Amount","Duplicate Bill","Bill Not Received"],
+      "Voltage related": ["Low Voltage","High Voltage","Voltage Fluctuation"],
+      "Frequent disruption": ["Frequent Power Cuts","Scheduled Outage Issue"],
+      "Street light related": ["Street Light Not Working","Street Light Damaged"],
+      "Pole related": ["Pole Damaged","Pole Leaning","New Pole Request"]
+    }
+  };
+
+  const $ = (sel) => document.querySelector(sel);
+  const screens = ["login","register","register-ack","home","paybill","payment","card","payment-success","complaint","complaint-ack","complaintstatus"];
+
+  function showScreen(name){
+    screens.forEach(s => $("#screen-"+s).classList.toggle("hidden", s !== name));
+    document.querySelectorAll(".navlink").forEach(b=>{
+      b.classList.toggle("active", b.dataset.target === name);
+    });
+    const authed = name !== "login" && name !== "register" && name !== "register-ack";
+    $("#topnav").classList.toggle("hidden", !authed);
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  function fmt(amount){
+    return "₹" + amount.toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function randDigits(n){
+    let s = "";
+    for(let i=0;i<n;i++) s += Math.floor(Math.random()*10);
+    return s;
+  }
+  function markError(fieldEl, isError){
+    const wrap = fieldEl.closest(".field");
+    if(wrap) wrap.classList.toggle("error", isError);
+  }
+
+  $("#loginForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    const uid = $("#loginUserId").value.trim();
+    const pwd = $("#loginPassword").value;
+    if(!uid || !pwd){
+      markError($("#loginPassword"), true);
+      return;
+    }
+    markError($("#loginPassword"), false);
+    state.userId = uid;
+    $("#welcomeText").textContent = "Welcome, " + uid;
+    $("#homeGreeting").textContent = "Welcome back, " + uid;
+    renderBills();
+    showScreen("home");
+  });
+  $("#goRegister").addEventListener("click", ()=> showScreen("register"));
+  $("#backToLoginFromReg").addEventListener("click", ()=> showScreen("login"));
+
+  $("#registerForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    const consumerId = $("#regConsumerId");
+    const billNumber = $("#regBillNumber");
+    const title = $("#regTitle");
+    const name = $("#regName");
+    const email = $("#regEmail");
+    const cc = $("#regCountryCode");
+    const mobile = $("#regMobile");
+    const userId = $("#regUserId");
+    const pwd = $("#regPassword");
+    const cpwd = $("#regConfirmPassword");
+
+    let ok = true;
+    const checkPattern = (el, re) => {
+      const valid = re.test(el.value.trim());
+      markError(el, !valid);
+      if(!valid) ok = false;
+      return valid;
+    };
+    checkPattern(consumerId, /^\d{13}$/);
+    checkPattern(billNumber, /^\d{5}$/);
+    if(!title.value){ markError(title,true); ok=false;} else markError(title,false);
+    if(!name.value.trim()){ markError(name,true); ok=false;} else markError(name,false);
+    if(!/^\S+@\S+\.\S+$/.test(email.value.trim())){ markError(email,true); ok=false;} else markError(email,false);
+    const mobileOk = cc.value && /^\d{10}$/.test(mobile.value.trim());
+    markError(mobile, !mobileOk);
+    if(!mobileOk) ok = false;
+    if(userId.value.trim().length < 5 || userId.value.trim().length > 20){ markError(userId,true); ok=false;} else markError(userId,false);
+    const pwdOk = pwd.value.length > 0 && pwd.value.length <= 30 && pwd.value === cpwd.value;
+    markError(cpwd, !pwdOk);
+    if(!pwdOk) ok = false;
+
+    if(!ok) return;
+
+    $("#ackCustomerId").textContent = consumerId.value.trim();
+    $("#ackName").textContent = name.value.trim();
+    $("#ackEmail").textContent = email.value.trim();
+    state.userId = userId.value.trim();
+    showScreen("register-ack");
+  });
+  $("#ackToLogin").addEventListener("click", ()=>{
+    $("#loginUserId").value = state.userId;
+    showScreen("login");
+  });
+
+  document.querySelectorAll(".navlink").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const target = btn.dataset.target;
+      if(target === "paybill") renderBills();
+      if(target === "complaintstatus") renderComplaints();
+      showScreen(target);
+    });
+  });
+  $("#logoutBtn").addEventListener("click", ()=>{
+    state.userId = "";
+    showScreen("login");
+  });
+
+  function renderBills(){
+    const tbody = $("#billsTbody");
+    tbody.innerHTML = "";
+    state.bills.forEach(b=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><input type="checkbox" class="billCheck" data-id="${b.id}"></td>
+        <td>${b.period}</td>
+        <td>${b.consumer}</td>
+        <td>${b.due}</td>
+        <td>${fmt(b.amount)}</td>`;
+      tbody.appendChild(tr);
+    });
+    updateBillTotal();
+    tbody.querySelectorAll(".billCheck").forEach(cb=>{
+      cb.addEventListener("change", updateBillTotal);
+    });
+    $("#homeUnpaidCount").textContent = state.bills.length;
+  }
+  function updateBillTotal(){
+    const checked = Array.from(document.querySelectorAll(".billCheck:checked"));
+    const total = checked.reduce((sum, cb)=>{
+      const bill = state.bills.find(b=>b.id === cb.dataset.id);
+      return sum + (bill ? bill.amount : 0);
+    }, 0);
+    state.selectedBillTotal = total;
+    $("#billTotal").textContent = fmt(total);
+    $("#proceedToPay").disabled = total <= 0;
+  }
+  $("#proceedToPay").addEventListener("click", ()=>{
+    const pgCharge = +(state.selectedBillTotal * 0.015).toFixed(2);
+    const total = state.selectedBillTotal + pgCharge;
+    $("#payBillAmount").textContent = fmt(state.selectedBillTotal);
+    $("#payPgCharge").textContent = fmt(pgCharge);
+    $("#payTotalAmount").textContent = fmt(total);
+    showScreen("payment");
+  });
+
+  $("#backToHomeFromPay").addEventListener("click", ()=> showScreen("home"));
+  $("#payNowBtn").addEventListener("click", ()=>{
+    const mode = document.querySelector('input[name="payMode"]:checked').value;
+    $("#cardHeading").textContent = mode + " Card";
+    showScreen("card");
+  });
+  $("#backToHomeFromCard").addEventListener("click", ()=> showScreen("home"));
+
+  $("#cardForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    const num = $("#cardNumber");
+    const holder = $("#cardHolder");
+    const expiry = $("#cardExpiry");
+    const cvv = $("#cardCvv");
+    let ok = true;
+    const numOk = /^\d{16,19}$/.test(num.value.trim());
+    markError(num, !numOk); if(!numOk) ok=false;
+    const holderOk = holder.value.trim().length >= 10;
+    markError(holder, !holderOk); if(!holderOk) ok=false;
+    const expOk = /^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry.value.trim());
+    markError(expiry, !expOk); if(!expOk) ok=false;
+    const cvvOk = /^\d{3,4}$/.test(cvv.value.trim());
+    markError(cvv, !cvvOk); if(!cvvOk) ok=false;
+    if(!ok) return;
+
+    const mode = document.querySelector('input[name="payMode"]:checked').value;
+    const txn = "TXN" + randDigits(10);
+    const now = new Date();
+    $("#txnId").textContent = txn;
+    $("#txnAmount").textContent = $("#payTotalAmount").textContent;
+    $("#txnMode").textContent = mode + " Card";
+    $("#txnDate").textContent = now.toLocaleString();
+
+    const receiptText =
+`VIDYUT CONNECT — PAYMENT RECEIPT
+----------------------------------
+Transaction ID : ${txn}
+Amount Paid    : ${$("#payTotalAmount").textContent}
+Mode           : ${mode} Card
+Date & Time    : ${now.toLocaleString()}
+User           : ${state.userId}
+----------------------------------
+This is a static, offline-generated receipt.`;
+    const blob = new Blob([receiptText], {type:"text/plain"});
+    const url = URL.createObjectURL(blob);
+    const link = $("#downloadReceipt");
+    link.href = url;
+    link.download = txn + "_receipt.txt";
+
+    showScreen("payment-success");
+  });
+  $("#backToHomeFromSuccess").addEventListener("click", ()=> showScreen("home"));
+
+  $("#cType").addEventListener("change", function(){
+    const cat = $("#cCategory");
+    const list = state.complaintTypeCategories[this.value] || [];
+    cat.innerHTML = "";
+    if(!list.length){
+      cat.disabled = true;
+      cat.innerHTML = '<option value="">Select type first</option>';
+      return;
+    }
+    cat.disabled = false;
+    cat.innerHTML = '<option value="">Select category</option>' +
+      list.map(c=>`<option>${c}</option>`).join("");
+  });
+
+  function resetComplaintForm(){
+    $("#complaintForm").reset();
+    $("#cCategory").disabled = true;
+    $("#cCategory").innerHTML = '<option value="">Select type first</option>';
+    document.querySelectorAll("#complaintForm .field").forEach(f=>f.classList.remove("error"));
+  }
+  $("#complaintCancel").addEventListener("click", resetComplaintForm);
+
+  $("#complaintForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    const type = $("#cType"), category = $("#cCategory"), contact = $("#cContact"),
+          landmark = $("#cLandmark"), consumerNo = $("#cConsumerNo"), mobile = $("#cMobile"),
+          problem = $("#cProblem"), address = $("#cAddress");
+    let ok = true;
+    [ [type, !!type.value], [category, !!category.value], [contact, !!contact.value.trim()],
+      [landmark, !!landmark.value.trim()], [problem, !!problem.value.trim()], [address, !!address.value.trim()]
+    ].forEach(([el, valid])=>{ markError(el, !valid); if(!valid) ok = false; });
+    const consumerOk = /^\d{13}$/.test(consumerNo.value.trim());
+    markError(consumerNo, !consumerOk); if(!consumerOk) ok = false;
+    const mobileOk = /^\d{10}$/.test(mobile.value.trim());
+    markError(mobile, !mobileOk); if(!mobileOk) ok = false;
+    if(!ok) return;
+
+    const id = "CMP-" + randDigits(6);
+    state.complaints.push({
+      id, type: type.value, category: category.value,
+      loggedOn: new Date().toLocaleDateString(),
+      status: "Open"
+    });
+    $("#complaintAckId").textContent = id;
+    resetComplaintForm();
+    showScreen("complaint-ack");
+  });
+  $("#ackToComplaintStatus").addEventListener("click", ()=>{ renderComplaints(); showScreen("complaintstatus"); });
+  $("#ackToHomeFromComplaint").addEventListener("click", ()=> showScreen("home"));
+
+  function renderComplaints(){
+    const tbody = $("#complaintTbody");
+    tbody.innerHTML = "";
+    const note = $("#noComplaintsNote");
+    if(!state.complaints.length){
+      note.style.display = "block";
+      $("#complaintTable").style.display = "none";
+      return;
+    }
+    note.style.display = "none";
+    $("#complaintTable").style.display = "table";
+    const pillClass = {Open:"status-open", "In Progress":"status-progress", Resolved:"status-resolved"};
+    state.complaints.forEach(c=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${c.id}</td>
+        <td>${c.type}</td>
+        <td>${c.category}</td>
+        <td>${c.loggedOn}</td>
+        <td><span class="status-pill ${pillClass[c.status]}">${c.status}</span></td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  showScreen("login");
+})();
+</script>
+</body>
+</html>
